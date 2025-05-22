@@ -2,6 +2,6 @@
     <string name="app_name">NewsAggregator</string>
     <string name="creator">"Creator: "</string>
     <string name="newsaggregator">NewsAggregator</string>
-    <string name="sort_by_newest_title">Сначала новые</string>
-    <string name="sort_by_oldest_title">Сначала старые</string>
+    <string name="sort_by_newest_title">Newest first</string>
+    <string name="sort_by_oldest_title">Oldest first</string>
 </resources>

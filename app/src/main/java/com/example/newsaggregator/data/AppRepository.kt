@@ -14,10 +14,6 @@ import com.example.newsaggregator.data.rss.RssFeed
 import com.example.newsaggregator.data.rss.dto.RssDto
 import com.example.newsaggregator.domain.CurrentAppRepository
 import com.example.newsaggregator.ui.NewsItem
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -56,19 +52,19 @@ class AppRepository @Inject constructor(
         deleteCategories.join()
     }
 
-    override suspend fun insertNews(news: List<NewsItemEntity>) {
+    private suspend fun insertNews(news: List<NewsItemEntity>) {
         newsDao.insertNews(news)
     }
 
-    override suspend fun insertPictures(pictures: List<PicturesEntity>) {
+    private suspend fun insertPictures(pictures: List<PicturesEntity>) {
         newsDao.insertPictures(pictures)
     }
 
-    override suspend fun insertCategories(categories: List<CategoryEntity>) {
+    private suspend fun insertCategories(categories: List<CategoryEntity>) {
         newsDao.insertCategories(categories)
     }
 
-    override suspend fun insertNewsCategories(newsCategoriesList: List<NewsCategoryCrossRef>) {
+    private suspend fun insertNewsCategories(newsCategoriesList: List<NewsCategoryCrossRef>) {
         newsDao.insertNewsCategories(newsCategoriesList)
     }
 
@@ -117,9 +113,3 @@ class AppRepository @Inject constructor(
     }
 }
 
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule() {
-    @Binds
-    abstract fun bindsOnlineRssRepository(appRepository: AppRepository): CurrentAppRepository
-}
