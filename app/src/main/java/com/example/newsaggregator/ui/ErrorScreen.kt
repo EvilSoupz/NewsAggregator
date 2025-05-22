@@ -13,10 +13,8 @@ fun ErrorScreen(
     msg: String,
     onRefresh: () -> Unit,
 ) {
-
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = msg)
         Button(onClick = onRefresh) { Text("Refresh") }
     }
-
 }

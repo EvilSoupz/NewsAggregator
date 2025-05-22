@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DropdownMenu
@@ -33,9 +34,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.newsaggregator.R
 import com.example.newsaggregator.viewmodels.NewsListScreenState
 import com.example.newsaggregator.viewmodels.NewsListViewModel
+import com.example.newsaggregator.viewmodels.SortOption
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,9 +46,10 @@ fun MainScreen(
 ) {
     when (val screenState = viewModel.screenStateFlow.collectAsState().value) {
         is NewsListScreenState.Error -> {
-            ErrorScreen(msg = screenState.msg) {
-                viewModel.getAllNews()
-            }
+            ErrorScreen(
+                msg = screenState.msg,
+                onRefresh = viewModel::onRetryClicked
+            )
         }
 
         is NewsListScreenState.Loading -> {
@@ -71,7 +73,7 @@ fun MainScreen(
                                 contentDescription = null
                             )  //search
                         }
-                        Box() {
+                        Box {
                             IconButton(
                                 onClick = {
                                     sortMenuState = !sortMenuState
@@ -82,21 +84,16 @@ fun MainScreen(
                                     contentDescription = null
                                 )  // filter //заменить иконку
                             }
-                            DropdownMenu(
-                                expanded = sortMenuState,
-                                onDismissRequest = {
+
+                            DropdownSort(
+                                sortMenuState = sortMenuState,
+                                options = screenState.availableSortOptions,
+                                onOptionSelected = viewModel::onOptionSelected,
+                                selectedSortOption = screenState.selectedSortOption,
+                                onCloseDropdown = {
                                     sortMenuState = false
                                 }
-                            ) {
-                                DropdownMenuItem(text = { Text(stringResource(R.string.new_first)) }, onClick = {
-                                    viewModel.sortNewFirst()
-                                    sortMenuState = false
-                                })
-                                DropdownMenuItem(text = { Text(stringResource(R.string.old_first)) }, onClick = {
-                                    viewModel.sortOldFirst()
-                                    sortMenuState = false
-                                })
-                            }
+                            )
                         }
                         Box {
                             IconButton(
@@ -117,7 +114,7 @@ fun MainScreen(
                                     DropdownMenuItem(
                                         text = { Text(domain) },
                                         onClick = {
-                                            viewModel.getNewsByCategoryDomain(domain)
+                                            viewModel.onCategoryDomainSelected(domain)
                                         }
                                     )
                                 }
@@ -125,9 +122,7 @@ fun MainScreen(
                         }
                     }
                     PullToRefreshBox(
-                        onRefresh = {
-                            viewModel.updateAndGetAllNews()
-                        },
+                        onRefresh = viewModel::onScreenRefreshed,
                         isRefreshing = false
                     ) {
                         LazyColumn(
@@ -143,6 +138,7 @@ fun MainScreen(
                                     onClick = { guid ->
                                         onItemClick(guid)
                                     },
+                                    modifier = Modifier.padding(4.dp)
                                 )
                             }
                         }
@@ -163,6 +159,35 @@ fun MainScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DropdownSort(
+    sortMenuState: Boolean,
+    options: List<SortOption>,
+    onOptionSelected: (option: SortOption) -> Unit,
+    onCloseDropdown: () -> Unit,
+    selectedSortOption: SortOption
+) {
+    DropdownMenu(
+        expanded = sortMenuState,
+        onDismissRequest = { onCloseDropdown() }
+    ) {
+        options.forEach { option ->
+            DropdownMenuItem(
+                text = { Text(stringResource(option.title)) },
+                onClick = {
+                    onOptionSelected(option)
+                    onCloseDropdown()
+                },
+                leadingIcon = {
+                    if (option == selectedSortOption) {
+                        Icon(Icons.Default.Check, contentDescription = null)
+                    }
+                }
+            )
         }
     }
 }

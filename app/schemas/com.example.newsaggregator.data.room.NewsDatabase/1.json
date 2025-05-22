@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f1709f059f666809cde1ecc3b9f0a5d9",
+    "identityHash": "0bcdaeba826d846536212f9bcea112f9",
     "entities": [
       {
         "tableName": "news",
@@ -49,7 +49,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "PicturesEntity",
+        "tableName": "pictures",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`url` TEXT NOT NULL, `newsGuid` TEXT NOT NULL, PRIMARY KEY(`url`))",
         "fields": [
           {
@@ -75,14 +75,21 @@
         "foreignKeys": []
       },
       {
-        "tableName": "CategoryEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`value` TEXT NOT NULL, PRIMARY KEY(`value`))",
+        "tableName": "categories",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`value` TEXT NOT NULL, `domain` TEXT NOT NULL DEFAULT '', PRIMARY KEY(`value`))",
         "fields": [
           {
             "fieldPath": "value",
             "columnName": "value",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "domain",
+            "columnName": "domain",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -95,7 +102,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "NewsCategoryCrossRef",
+        "tableName": "news_categories_cross_ref",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`guid` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`guid`, `value`))",
         "fields": [
           {
@@ -125,7 +132,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f1709f059f666809cde1ecc3b9f0a5d9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0bcdaeba826d846536212f9bcea112f9')"
     ]
   }
 }

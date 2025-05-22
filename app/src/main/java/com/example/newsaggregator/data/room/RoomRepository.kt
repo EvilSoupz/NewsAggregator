@@ -1,5 +1,11 @@
 package com.example.newsaggregator.data.room
 
+import com.example.newsaggregator.data.room.entities.CategoryEntity
+import com.example.newsaggregator.data.room.entities.NewsCategoryCrossRef
+import com.example.newsaggregator.data.room.entities.NewsItemEntity
+import com.example.newsaggregator.data.room.entities.NewsWithPictureAndCategories
+import com.example.newsaggregator.data.room.entities.PicturesEntity
+
 
 interface RoomRepository {
 

@@ -2,6 +2,7 @@ package com.example.newsaggregator.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsaggregator.R
 import com.example.newsaggregator.domain.usecases.GetAllNewsUseCase
 import com.example.newsaggregator.domain.usecases.GetDomainListUseCase
 import com.example.newsaggregator.domain.usecases.GetNewsListByDomainUseCase
@@ -27,56 +28,25 @@ class NewsListViewModel @Inject constructor(
         MutableStateFlow(NewsListScreenState.Loading)
     val screenStateFlow: StateFlow<NewsListScreenState> = _screenStateFlow.asStateFlow()
 
-    private var oldFirst = false
-
     init {
         getAllNews()
     }
 
-   fun getAllNews() {
-       _screenStateFlow.update { NewsListScreenState.Loading }
-        viewModelScope.launch {
-            _screenStateFlow.update {
-                try {
-                    val result = getAllNewsUseCase()
-                    if (result.isEmpty()) {
-                        NewsListScreenState.Error("EmptyNewsList")
-                    } else {
-                        val domainList = getDomainListUseCase()
-                        if (oldFirst) {
-                            NewsListScreenState.Success(
-                                newsList = result.sortedBy { it.dcDate },
-                                domainsList = domainList
-                            )
-                        } else {
-                            NewsListScreenState.Success(
-                                newsList = result.sortedByDescending { it.dcDate },
-                                domainsList = domainList
-                            )
-                        }
-                    }
-                } catch (e: Throwable) {
-                    NewsListScreenState.Error("${e.message}")
-                }
-            }
-        }
+    fun onRetryClicked() {
+        getAllNews()
     }
 
-    fun sortNewFirst() {
-        if (oldFirst) {
-            oldFirst = false
-            getAllNews()
-        }
+    fun onOptionSelected(sortOption: SortOption) {
+        val currentState = _screenStateFlow.value as NewsListScreenState.Success
+        if (currentState.selectedSortOption == sortOption) return
+
+        _screenStateFlow.value = currentState.copy(
+            selectedSortOption = sortOption
+        )
+        getAllNews()
     }
 
-    fun sortOldFirst() {
-        if (!oldFirst) {
-            oldFirst = true
-            getAllNews()
-        }
-    }
-
-    fun updateAndGetAllNews() {
+    fun onScreenRefreshed() {
         _screenStateFlow.value = NewsListScreenState.Loading
         viewModelScope.launch {
             runCatching {
@@ -88,21 +58,23 @@ class NewsListViewModel @Inject constructor(
         }
     }
 
-    fun getNewsByCategoryDomain(domain: String) {
-        require(_screenStateFlow.value is NewsListScreenState.Success)
-        val oldState = _screenStateFlow.value as NewsListScreenState.Success
+    fun onCategoryDomainSelected(domain: String) {
+        val previousSuccessState = _screenStateFlow.value as NewsListScreenState.Success
         _screenStateFlow.value = NewsListScreenState.Loading
+
         viewModelScope.launch {
             val newState = try {
                 val result = getNewsListByDomainUseCase(domain)
                 if (result.isEmpty()) {
                     NewsListScreenState.Error("EmptyNewsList")
                 } else {
-                    if (oldFirst) {
-                        oldState.copy(newsList = result.sortedBy { it.dcDate })
-                    } else {
-                        oldState.copy(newsList = result.sortedByDescending { it.dcDate })
-                    }
+                    val newsList =
+                        if (previousSuccessState.selectedSortOption.type == SortType.OLDEST_FIRST) {
+                            result.sortedBy { it.dcDate }
+                        } else {
+                            result.sortedByDescending { it.dcDate }
+                        }
+                    previousSuccessState.copy(newsList = newsList)
                 }
             } catch (e: IOException) {
                 NewsListScreenState.Error("IOException")
@@ -110,13 +82,54 @@ class NewsListViewModel @Inject constructor(
             _screenStateFlow.value = newState
         }
     }
+
+    private fun getAllNews() {
+        val previousSuccessState = _screenStateFlow.value as? NewsListScreenState.Success
+        val selectedSortType = previousSuccessState?.selectedSortOption?.type ?: SortType.NEWEST_FIRST
+        _screenStateFlow.update { NewsListScreenState.Loading }
+
+        viewModelScope.launch {
+            _screenStateFlow.update {
+                try {
+                    val result = getAllNewsUseCase()
+                    if (result.isEmpty()) {
+                        NewsListScreenState.Error("EmptyNewsList")
+                    } else {
+                        val domainList = getDomainListUseCase()
+                        val newsList = if (selectedSortType == SortType.NEWEST_FIRST) {
+                            result.sortedByDescending { it.dcDate }
+                        } else {
+                            result.sortedBy { it.dcDate }
+                        }
+                        previousSuccessState?.copy(
+                            newsList = newsList,
+                            domainsList = domainList
+                        ) ?: NewsListScreenState.Success(
+                            newsList = newsList,
+                            domainsList = domainList
+                        )
+                    }
+                } catch (e: Throwable) {
+                    NewsListScreenState.Error("${e.message}")
+                }
+            }
+        }
+    }
 }
 
-
 sealed interface NewsListScreenState {
+
     data class Success(
         val newsList: List<NewsItem>,
         val domainsList: List<String>,
+        val availableSortOptions: List<SortOption> = listOf(
+            SortOption(SortType.NEWEST_FIRST, R.string.sort_by_newest_title),
+            SortOption(SortType.OLDEST_FIRST, R.string.sort_by_oldest_title)
+        ),
+        val selectedSortOption: SortOption = SortOption(
+            SortType.NEWEST_FIRST,
+            R.string.sort_by_newest_title
+        )
     ) : NewsListScreenState
 
     data object Loading : NewsListScreenState

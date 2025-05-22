@@ -2,13 +2,13 @@ package com.example.newsaggregator.data
 
 import com.example.newsaggregator.data.mappers.toNewsItem
 import com.example.newsaggregator.data.mappers.toNewsWithPictureAndCategories
-import com.example.newsaggregator.data.room.CategoryEntity
-import com.example.newsaggregator.data.room.NewsCategoryCrossRef
 import com.example.newsaggregator.data.room.NewsDao
-import com.example.newsaggregator.data.room.NewsItemEntity
-import com.example.newsaggregator.data.room.NewsWithPictureAndCategories
-import com.example.newsaggregator.data.room.PicturesEntity
 import com.example.newsaggregator.data.room.RoomRepository
+import com.example.newsaggregator.data.room.entities.CategoryEntity
+import com.example.newsaggregator.data.room.entities.NewsCategoryCrossRef
+import com.example.newsaggregator.data.room.entities.NewsItemEntity
+import com.example.newsaggregator.data.room.entities.NewsWithPictureAndCategories
+import com.example.newsaggregator.data.room.entities.PicturesEntity
 import com.example.newsaggregator.data.rss.OnlineRssRepository
 import com.example.newsaggregator.data.rss.RssFeed
 import com.example.newsaggregator.data.rss.dto.RssDto

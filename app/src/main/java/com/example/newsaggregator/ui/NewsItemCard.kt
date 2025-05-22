@@ -23,10 +23,11 @@ import com.example.newsaggregator.R
 @Composable
 fun NewsItemCard(
     item: NewsItem,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(280.dp)
             .clickable { onClick(item.guid) }) {
