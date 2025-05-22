@@ -25,14 +25,15 @@ object GuardianRetrofitModule {
             .readTimeout(30, TimeUnit.SECONDS)     // Таймаут на чтение ответа
             .writeTimeout(30, TimeUnit.SECONDS)    // Таймаут на отправку данных
             .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY // Уровень логирования (BODY, HEADERS, BASIC)
+                level =
+                    HttpLoggingInterceptor.Level.BODY // Уровень логирования (BODY, HEADERS, BASIC)
             })
             .build()
     }
 
     @Provides
     @Singleton
-    fun provideRssFeed(okHttpClient: OkHttpClient) : RssFeed {
+    fun provideRssFeed(okHttpClient: OkHttpClient): RssFeed {
         return Retrofit.Builder()
             .baseUrl("https://www.theguardian.com")
             .client(okHttpClient)

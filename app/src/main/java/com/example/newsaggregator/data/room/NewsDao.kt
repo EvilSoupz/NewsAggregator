@@ -5,6 +5,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.example.newsaggregator.data.room.entities.CategoryEntity
+import com.example.newsaggregator.data.room.entities.NewsCategoryCrossRef
+import com.example.newsaggregator.data.room.entities.NewsItemEntity
+import com.example.newsaggregator.data.room.entities.NewsWithPictureAndCategories
+import com.example.newsaggregator.data.room.entities.PicturesEntity
 
 @Dao
 interface NewsDao {
@@ -13,14 +18,14 @@ interface NewsDao {
     suspend fun getAllNews(): List<NewsWithPictureAndCategories>
 
 
-    @Query("SELECT DISTINCT domain FROM categoryentity")
+    @Query("SELECT DISTINCT domain FROM categories")
     suspend fun getDomainList(): List<String>
 
     @Transaction
     @Query(
         "SELECT * FROM news WHERE guid IN (" +
-                "SELECT guid FROM newscategorycrossref WHERE value IN (" +
-                "SELECT value FROM categoryentity WHERE domain LIKE :domain))"
+                "SELECT guid FROM news_categories_cross_ref WHERE value IN (" +
+                "SELECT value FROM categories WHERE domain LIKE :domain))"
     )
     suspend fun getNewsByCategoryDomain(domain: String): List<NewsWithPictureAndCategories>
 
@@ -28,10 +33,10 @@ interface NewsDao {
     @Query("DELETE FROM news")
     suspend fun deleteAllNews()
 
-    @Query("DELETE FROM categoryentity")
+    @Query("DELETE FROM categories")
     suspend fun deleteCategories()
 
-    @Query("DELETE FROM picturesentity")
+    @Query("DELETE FROM pictures")
     suspend fun deletePictures()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -9,5 +9,5 @@ interface CurrentAppRepository {
 
     suspend fun updateNewsList()
 
-    suspend fun getNewsListByCategoryDomain(domain : String) : List<NewsItem>
+    suspend fun getNewsListByCategoryDomain(domain: String): List<NewsItem>
 }

@@ -5,6 +5,10 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.newsaggregator.data.room.entities.CategoryEntity
+import com.example.newsaggregator.data.room.entities.NewsCategoryCrossRef
+import com.example.newsaggregator.data.room.entities.NewsItemEntity
+import com.example.newsaggregator.data.room.entities.PicturesEntity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +22,6 @@ import javax.inject.Singleton
 abstract class NewsDatabase : RoomDatabase() {
     abstract fun getNewsItemDao(): NewsDao
 }
-
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -39,5 +42,4 @@ object RoomModule {
     fun getNewsDao(db: NewsDatabase): NewsDao {
         return db.getNewsItemDao()
     }
-
 }

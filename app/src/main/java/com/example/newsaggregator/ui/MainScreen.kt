@@ -31,7 +31,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.newsaggregator.R
 import com.example.newsaggregator.viewmodels.NewsListScreenState
 import com.example.newsaggregator.viewmodels.NewsListViewModel
 
@@ -44,12 +46,14 @@ fun MainScreen(
     when (val screenState = viewModel.screenStateFlow.collectAsState().value) {
         is NewsListScreenState.Error -> {
             ErrorScreen(msg = screenState.msg) {
-                    viewModel.getAllNews()
+                viewModel.getAllNews()
             }
         }
+
         is NewsListScreenState.Loading -> {
-           LoadingScreen()
+            LoadingScreen()
         }
+
         is NewsListScreenState.Success -> {
             var sortMenuState by remember { mutableStateOf(false) }
             var domainMenuState by remember { mutableStateOf(false) }
@@ -84,11 +88,11 @@ fun MainScreen(
                                     sortMenuState = false
                                 }
                             ) {
-                                DropdownMenuItem(text = { Text("New First") }, onClick = {
+                                DropdownMenuItem(text = { Text(stringResource(R.string.new_first)) }, onClick = {
                                     viewModel.sortNewFirst()
                                     sortMenuState = false
                                 })
-                                DropdownMenuItem(text = { Text("Old First") }, onClick = {
+                                DropdownMenuItem(text = { Text(stringResource(R.string.old_first)) }, onClick = {
                                     viewModel.sortOldFirst()
                                     sortMenuState = false
                                 })
@@ -139,7 +143,6 @@ fun MainScreen(
                                     onClick = { guid ->
                                         onItemClick(guid)
                                     },
-                                    modifier = Modifier.padding(4.dp)
                                 )
                             }
                         }
