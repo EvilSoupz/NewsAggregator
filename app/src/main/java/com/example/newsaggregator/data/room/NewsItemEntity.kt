@@ -24,19 +24,6 @@ data class PicturesEntity(
     val newsGuid: String
 )
 
-data class NewsWithPicture(
-    @Embedded
-    val newsItem: NewsItemEntity,
-    @Relation(
-        parentColumn = "guid",
-        entityColumn = "newsGuid"
-    )
-    val pictures: List<PicturesEntity>
-)
-
-
-
-
 @Entity
 data class CategoryEntity(
     @PrimaryKey
@@ -48,16 +35,6 @@ data class CategoryEntity(
 data class NewsCategoryCrossRef(
     val guid : String,
     val value : String
-)
-
-data class NewsWithCategories(
-    @Embedded val newsItem: NewsItemEntity,
-    @Relation(
-        parentColumn = "guid",
-        entityColumn = "value",
-        associateBy = Junction(NewsCategoryCrossRef::class)
-    )
-    val categories : List<CategoryEntity>
 )
 
 data class NewsWithPictureAndCategories(

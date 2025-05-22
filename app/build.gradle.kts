@@ -105,4 +105,5 @@ dependencies {
 
     //workManager
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.logging.interceptor)
 }

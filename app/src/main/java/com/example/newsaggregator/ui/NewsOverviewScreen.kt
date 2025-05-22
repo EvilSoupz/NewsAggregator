@@ -6,11 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 
-
-
 @Composable
 fun NewsOverviewScreen(
-
     url : String
 ) {
     var context = LocalContext.current

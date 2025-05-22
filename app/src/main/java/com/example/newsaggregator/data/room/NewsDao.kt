@@ -7,7 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 @Dao
-interface NewsItemDao {
+interface NewsDao {
     @Transaction
     @Query("SELECT * FROM news")
     suspend fun getAllNews(): List<NewsWithPictureAndCategories>
@@ -18,15 +18,14 @@ interface NewsItemDao {
 
     @Transaction
     @Query(
-        "SELECT * from news " +
-                "INNER JOIN newscategorycrossref ON news.guid = newscategorycrossref.guid " +
-                "INNER JOIN categoryentity ON newscategorycrossref.value = categoryentity.value " +
-                "WHERE categoryentity.domain like :domain"
-    ) /// проблема : новости дублируются
+        "SELECT * FROM news WHERE guid IN (" +
+                "SELECT guid FROM newscategorycrossref WHERE value IN (" +
+                "SELECT value FROM categoryentity WHERE domain LIKE :domain))"
+    )
     suspend fun getNewsByCategoryDomain(domain: String): List<NewsWithPictureAndCategories>
 
     @Transaction
-    @Query("DELETE  FROM news")
+    @Query("DELETE FROM news")
     suspend fun deleteAllNews()
 
     @Query("DELETE FROM categoryentity")

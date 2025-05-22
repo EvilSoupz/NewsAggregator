@@ -16,7 +16,7 @@ import javax.inject.Singleton
     version = 2, autoMigrations = [AutoMigration(from = 1, to = 2)]
 )
 abstract class NewsDatabase : RoomDatabase() {
-    abstract fun getNewsItemDao(): NewsItemDao
+    abstract fun getNewsItemDao(): NewsDao
 }
 
 
@@ -36,7 +36,7 @@ object RoomModule {
 
     @Provides
     @Singleton
-    fun getNewsDao(db: NewsDatabase): NewsItemDao {
+    fun getNewsDao(db: NewsDatabase): NewsDao {
         return db.getNewsItemDao()
     }
 

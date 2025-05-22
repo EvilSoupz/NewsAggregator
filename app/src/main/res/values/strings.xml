@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NewsAggregator</string>
+    <string name="creator">"Creator: "</string>
+    <string name="newsaggregator">NewsAggregator</string>
 </resources>
